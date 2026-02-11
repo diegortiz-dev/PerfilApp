@@ -9,27 +9,32 @@ export default function Exibicao({route }: Props) {
   const { userName, userEmail, userBio } = route.params;
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Seu Perfil</Text>
-      <Text style={styles.infos}>{userName}</Text>
-      <Text style={styles.infos}>{userEmail}</Text>
-      <Text style={styles.infos}>{userBio}</Text>
+    <View style= {styles.tela}>
+      <View style={styles.card}>
+        <Text style={styles.title}>Seu Perfil</Text>
+        <Text style={styles.infos}>{userName}</Text>
+        <Text style={styles.infos}>{userEmail}</Text>
+        <Text style={styles.infos}>{userBio}</Text>
+      </View>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
 
-    container: {
-        flex:1,
+    tela: {
+        flex:2,
         justifyContent:"center",
         alignItems:"center",
-        backgroundColor:"#f0f0f0"
+        backgroundColor:"#e9feffff"
     },
     title:{
         fontSize:24,
         fontWeight:"bold",
-        marginBottom:20
+        marginBottom:20,
+        textAlign:"center",
+        paddingBottom:50,
+        color:"#3a3a3aff"
     },
     input:{
         height: 40,
@@ -43,8 +48,15 @@ const styles = StyleSheet.create({
     },
     infos:{
         fontSize:20,
-        marginBottom:10
-
+        marginBottom:10,
+        color:"#333333ff"
+    },
+    card:{
+      width:'90%',
+      backgroundColor:'#bbc6ffff',
+      padding:45,
+      borderRadius:20,
+     
     }
  
     });
