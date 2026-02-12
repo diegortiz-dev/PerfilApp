@@ -1,20 +1,40 @@
-import React, { useState } from 'react';
-import { View, Text, StyleSheet} from 'react-native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import React, { useEffect, useState } from 'react';
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { carregarDados, limparDados } from '../src/services/storage';
 
-type RootStackParamList = { Formulario: undefined; Exibicao: { userName: string; userEmail: string; userBio: string } };
+type RootStackParamList = { Formulario: undefined; Exibicao: { userName?: string; userEmail?: string; userBio?: string } };
 type Props = NativeStackScreenProps<RootStackParamList, 'Exibicao'>;
 
-export default function Exibicao({route }: Props) {
-  const { userName, userEmail, userBio } = route.params;
+export default function Exibicao({ route }: Props) {
+
+  const [nome, setNome] = useState(route.params?.userName ?? '');
+  const [email, setEmail] = useState(route.params?.userEmail ?? '');
+  const [bio, setBio] = useState(route.params?.userBio ?? '');
+
+  useEffect(() => {
+    carregarDados().then((usuario) => {
+      if (usuario) {
+        setNome(usuario.nome);
+        setEmail(usuario.email);
+        setBio(usuario.bio);
+      }
+    });
+  }, []);
 
   return (
-    <View style= {styles.tela}>
+    <View style={styles.tela}>
       <View style={styles.card}>
         <Text style={styles.title}>Seu Perfil</Text>
-        <Text style={styles.infos}>{userName}</Text>
-        <Text style={styles.infos}>{userEmail}</Text>
-        <Text style={styles.infos}>{userBio}</Text>
+        <Text style={styles.infos}>{nome}</Text>
+        <Text style={styles.infos}>{email}</Text>
+        <Text style={styles.infos}>{bio}</Text>
+        <TouchableOpacity 
+          style={styles.botaoLimpar} 
+          onPress={() => { limparDados().then(() => { setNome(''); setEmail(''); setBio(''); }) }}
+        >
+          <Text style={styles.botaoTexto}>Limpar Dados</Text>
+        </TouchableOpacity>
       </View>
     </View>
   );
@@ -56,7 +76,19 @@ const styles = StyleSheet.create({
       backgroundColor:'#bbc6ffff',
       padding:45,
       borderRadius:20,
-     
+    },
+    botaoLimpar:{
+      backgroundColor: '#E53935',
+      paddingVertical: 12,
+      paddingHorizontal: 30,
+      borderRadius: 8,
+      marginTop: 20,
+      alignItems: 'center'
+    },
+    botaoTexto:{
+      color: '#fff',
+      fontSize: 16,
+      fontWeight: 'bold'
     }
  
     });
