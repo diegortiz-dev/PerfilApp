@@ -60,3 +60,18 @@ export async function limparTodosPerfis(): Promise<void> {
   }
 }
 
+export async function atualizarPerfil(id: string, nome: string, email: string, bio: string): Promise<void> {
+  try {
+    const perfis = await carregarPerfis();
+    const index = perfis.findIndex((p) => p.id === id);
+    if (index !== -1) {
+      perfis[index] = { id, nome, email, bio };
+      await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(perfis));
+    } else {
+      throw new Error("Perfil não encontrado");
+    }
+  } catch (error) {
+    console.error("Erro ao atualizar o perfil:", error);
+    throw error;
+  }
+}

@@ -1,13 +1,20 @@
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import React from 'react';
-import { Alert, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import { removerPerfil } from '../src/services/storage';
+import { Alert, StyleSheet, Text, TouchableOpacity, View,TextInput } from 'react-native';
+import { removerPerfil, atualizarPerfil } from '../src/services/storage';
 import { RootStackParamList } from '../App';
+import {useState} from 'react';
+
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Exibicao'>;
 
 export default function Exibicao({ route, navigation }: Props) {
   const { id, userName, userEmail, userBio } = route.params;
+
+  const [editando, setEditando] =useState(false);
+  const [nome, setNome] = useState(userName);
+  const [email, setEmail] = useState(userEmail);
+  const [bio, setBio] = useState(userBio);
 
   function handleRemover() {
     Alert.alert('Remover', 'Deseja remover este perfil?', [
@@ -23,21 +30,66 @@ export default function Exibicao({ route, navigation }: Props) {
       },
     ]);
   }
+  function handleSalvarEdicao() {
+    if (!nome || !email) {
+      Alert.alert('Erro', 'Nome e email são obrigatórios');
+      return;
+    }
+    atualizarPerfil(id, nome, email, bio).then(() => {
+      Alert.alert('Sucesso', 'Perfil atualizado!');
+      setEditando(false);
+      navigation.goBack();
+    });
+  }
 
-  return (
+return (
     <View style={styles.tela}>
       <View style={styles.card}>
         <Text style={styles.title}>Perfil</Text>
-        <Text style={styles.infos}>{userName}</Text>
-        <Text style={styles.infos}>{userEmail}</Text>
-        <Text style={styles.infos}>{userBio}</Text>
-        <TouchableOpacity style={styles.botaoLimpar} onPress={handleRemover}>
-          <Text style={styles.botaoTexto}>Remover Perfil</Text>
-        </TouchableOpacity>
+
+        {editando ? (
+          <>
+            <TextInput style={styles.input} value={nome} onChangeText={setNome} placeholder="Nome" />
+            <TextInput style={styles.input} value={email} onChangeText={setEmail} placeholder="Email" />
+            <TextInput style={styles.input} value={bio} onChangeText={setBio} placeholder="Bio" />
+          </>
+        ) : (
+          <>
+            <Text style={styles.infos}>{nome}</Text>
+            <Text style={styles.infos}>{email}</Text>
+            <Text style={styles.infos}>{bio}</Text>
+          </>
+        )}
+
+        {editando ? (
+          <>
+            <TouchableOpacity style={styles.botaoSalvar} onPress={handleSalvarEdicao}>
+              <Text style={styles.botaoTexto}>Salvar Alterações</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.botaoCancelar} onPress={() => {
+              setNome(userName);
+              setEmail(userEmail);
+              setBio(userBio);
+              setEditando(false);
+            }}>
+              <Text style={styles.botaoTexto}>Cancelar</Text>
+            </TouchableOpacity>
+          </>
+        ) : (
+          <>
+            <TouchableOpacity style={styles.botaoEditar} onPress={() => setEditando(true)}>
+              <Text style={styles.botaoTexto}>Editar Perfil</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.botaoLimpar} onPress={handleRemover}>
+              <Text style={styles.botaoTexto}>Remover Perfil</Text>
+            </TouchableOpacity>
+          </>
+        )}
       </View>
     </View>
   );
 }
+
 
 const styles = StyleSheet.create({
 
@@ -59,11 +111,12 @@ const styles = StyleSheet.create({
         height: 40,
         borderColor: 'gray',
         borderWidth: 1,
-        width: '80%',
+        width: '100%',
         paddingHorizontal: 10,
         marginBottom: 20,
         backgroundColor: '#fff',
-        borderRadius: 5
+        borderRadius: 5,
+        
     },
     infos:{
         fontSize:20,
@@ -88,6 +141,30 @@ const styles = StyleSheet.create({
       color: '#fff',
       fontSize: 16,
       fontWeight: 'bold'
-    }
+    },
+    botaoEditar: {
+      backgroundColor: '#2196F3',
+      paddingVertical: 12,
+      paddingHorizontal: 30,
+      borderRadius: 8,
+      marginTop: 12,
+      alignItems: 'center'
+    },
+    botaoSalvar: {
+      backgroundColor: '#4CAF50',
+      paddingVertical: 12,
+      paddingHorizontal: 30,
+      borderRadius: 8,
+      marginTop: 20,
+      alignItems: 'center'
+    },
+    botaoCancelar: {
+      backgroundColor: '#757575',
+      paddingVertical: 12,
+      paddingHorizontal: 30,
+      borderRadius: 8,
+      marginTop: 10,
+      alignItems: 'center'
+    },
  
     });
