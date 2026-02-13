@@ -1,9 +1,9 @@
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import React, { useState } from 'react';
 import { Alert, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
-import { salvarDados } from '../src/services/storage';
+import { salvarPerfil } from '../src/services/storage';
+import { RootStackParamList } from '../App';
 
-type RootStackParamList = { Formulario: undefined; Exibicao: { userName?: string; userEmail?: string; userBio?: string } };
 type Props = NativeStackScreenProps<RootStackParamList, 'Formulario'>;
 
 
@@ -40,15 +40,24 @@ export default function HomeScreen({ navigation }: Props) {
       <TextInput value={bio} onChangeText={setBio} style= {styles.input} placeholder="Digite sua bio"/>
       <TouchableOpacity 
         style={styles.botaoEnviar}
-        onPress={() => { if (Validacao(name, email)) { salvarDados(name, email, bio).then(() => { navigation.navigate('Exibicao', { userName: name, userEmail: email, userBio: bio }) }) } }}
+        onPress={() => {
+          if (Validacao(name, email)) {
+            salvarPerfil(name, email, bio).then(() => {
+              Alert.alert('Sucesso', 'Perfil salvo!');
+              setName('');
+              setEmail('');
+              setBio('');
+            });
+          }
+        }}
       >
-        <Text style={styles.botaoTexto}>Enviar Dados</Text>
+        <Text style={styles.botaoTexto}>Salvar Perfil</Text>
       </TouchableOpacity>
       <TouchableOpacity 
         style={styles.botaoVer}
-        onPress={() => { navigation.navigate('Exibicao', {}) }}
+        onPress={() => { navigation.navigate('VerPerfis') }}
       >
-        <Text style={styles.botaoTexto}>Ver Perfil Salvo</Text>
+        <Text style={styles.botaoTexto}>Ver Perfis Salvos</Text>
       </TouchableOpacity>
     </View>
   );

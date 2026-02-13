@@ -1,39 +1,38 @@
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import React, { useEffect, useState } from 'react';
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import { carregarDados, limparDados } from '../src/services/storage';
+import React from 'react';
+import { Alert, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { removerPerfil } from '../src/services/storage';
+import { RootStackParamList } from '../App';
 
-type RootStackParamList = { Formulario: undefined; Exibicao: { userName?: string; userEmail?: string; userBio?: string } };
 type Props = NativeStackScreenProps<RootStackParamList, 'Exibicao'>;
 
-export default function Exibicao({ route }: Props) {
+export default function Exibicao({ route, navigation }: Props) {
+  const { id, userName, userEmail, userBio } = route.params;
 
-  const [nome, setNome] = useState(route.params?.userName ?? '');
-  const [email, setEmail] = useState(route.params?.userEmail ?? '');
-  const [bio, setBio] = useState(route.params?.userBio ?? '');
-
-  useEffect(() => {
-    carregarDados().then((usuario) => {
-      if (usuario) {
-        setNome(usuario.nome);
-        setEmail(usuario.email);
-        setBio(usuario.bio);
-      }
-    });
-  }, []);
+  function handleRemover() {
+    Alert.alert('Remover', 'Deseja remover este perfil?', [
+      { text: 'Cancelar', style: 'cancel' },
+      {
+        text: 'Remover',
+        style: 'destructive',
+        onPress: () => {
+          removerPerfil(id).then(() => {
+            navigation.goBack();
+          });
+        },
+      },
+    ]);
+  }
 
   return (
     <View style={styles.tela}>
       <View style={styles.card}>
-        <Text style={styles.title}>Seu Perfil</Text>
-        <Text style={styles.infos}>{nome}</Text>
-        <Text style={styles.infos}>{email}</Text>
-        <Text style={styles.infos}>{bio}</Text>
-        <TouchableOpacity 
-          style={styles.botaoLimpar} 
-          onPress={() => { limparDados().then(() => { setNome(''); setEmail(''); setBio(''); }) }}
-        >
-          <Text style={styles.botaoTexto}>Limpar Dados</Text>
+        <Text style={styles.title}>Perfil</Text>
+        <Text style={styles.infos}>{userName}</Text>
+        <Text style={styles.infos}>{userEmail}</Text>
+        <Text style={styles.infos}>{userBio}</Text>
+        <TouchableOpacity style={styles.botaoLimpar} onPress={handleRemover}>
+          <Text style={styles.botaoTexto}>Remover Perfil</Text>
         </TouchableOpacity>
       </View>
     </View>
