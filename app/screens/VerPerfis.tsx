@@ -47,6 +47,7 @@ export default function VerPerfis({ navigation }: Props) {
   function renderCard({ item }: { item: Perfil }) {
     return (
       <TouchableOpacity
+      
         style={styles.card}
         onPress={() =>
           navigation.navigate('Exibicao', {
@@ -57,40 +58,52 @@ export default function VerPerfis({ navigation }: Props) {
           })
         }
       >
+        <Text style={styles.usuario}>Usuário</Text>  
         <Text style={styles.cardNome}>{item.nome}</Text>
-        <Text style={styles.cardEmail}>{item.email}</Text>
-        {item.bio ? <Text style={styles.cardBio}>{item.bio}</Text> : null}
-        <TouchableOpacity style={styles.botaoRemover} onPress={() => handleRemover(item.id)}>
-          <Text style={styles.botaoRemoverTexto}>Remover</Text>
         </TouchableOpacity>
-      </TouchableOpacity>
+    
     );
   }
 
   return (
     <View style={styles.container}>
-      {perfis.length === 0 ? (
-        <View style={styles.vazioContainer}>
-          <Text style={styles.vazioTexto}>Nenhum perfil salvo ainda.</Text>
-        </View>
-      ) : (
-        <FlatList
-          data={perfis}
-          keyExtractor={(item) => item.id}
-          renderItem={renderCard}
-          contentContainerStyle={styles.lista}
-        />
-      )}
-      {perfis.length > 0 && (
-        <TouchableOpacity style={styles.botaoLimpar} onPress={handleLimparTodos}>
-          <Text style={styles.botaoLimparTexto}>Limpar Todos</Text>
-        </TouchableOpacity>
-      )}
+      <Text style={styles.titulo}>Perfis Salvos</Text>    
+          {perfis.length === 0 ? (
+            <View style={styles.vazioContainer}>
+              <Text style={styles.vazioTexto}>Nenhum perfil salvo ainda.</Text>
+            </View>
+          ) : (
+            <FlatList
+              data={perfis}
+              keyExtractor={(item) => item.id}
+              renderItem={renderCard}
+              contentContainerStyle={styles.lista}
+            />
+          )}
+          {perfis.length > 0 && (
+            <TouchableOpacity style={styles.botaoLimpar} onPress={handleLimparTodos}>
+              <Text style={styles.botaoLimparTexto}>Limpar Todos</Text>
+            </TouchableOpacity>
+          )}
     </View>
   );
 }
 
 const styles = StyleSheet.create({
+  usuario: {
+    fontSize: 16,
+    color: '#032672ff',
+    marginBottom: 6,
+    fontFamily: 'bold',
+    
+  },
+  titulo: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    color: '#333',
+    margin: 16,
+    textAlign: 'center',
+  },
   container: {
     flex: 1,
     backgroundColor: '#f0f0f0',
@@ -100,26 +113,22 @@ const styles = StyleSheet.create({
   },
   card: {
     backgroundColor: '#bbc6ffff',
-    padding: 20,
+    padding: 25,
     borderRadius: 16,
-    marginBottom: 14,
+    marginBottom: 25,
+    maxHeight: 100,
+    shadowColor: '#000',
+    shadowOffset: { width: 1, height: 2 },
+    shadowOpacity: 0.8,
+    shadowRadius: 4,
+    elevation: 9,
   },
   cardNome: {
     fontSize: 20,
     fontWeight: 'bold',
     color: '#3a3a3a',
-    marginBottom: 4,
-  },
-  cardEmail: {
-    fontSize: 16,
-    color: '#555',
-    marginBottom: 4,
-  },
-  cardBio: {
-    fontSize: 14,
-    color: '#666',
-    fontStyle: 'italic',
     marginBottom: 8,
+    marginTop: 8,
   },
   botaoRemover: {
     alignSelf: 'flex-end',
