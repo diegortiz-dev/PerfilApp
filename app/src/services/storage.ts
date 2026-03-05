@@ -43,7 +43,7 @@ export async function carregarPerfis(): Promise<Perfil[]> {
 export async function removerPerfil(id: string): Promise<void> {
   try {
     const perfis = await carregarPerfis();
-    const novaLista = perfis.filter((p) => p.id !== id);
+    const novaLista = perfis.filter((perfil) => perfil.id !== id);
     await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(novaLista));
   } catch (error) {
     console.error("Erro ao remover o perfil:", error);
@@ -63,7 +63,7 @@ export async function limparTodosPerfis(): Promise<void> {
 export async function atualizarPerfil(id: string, nome: string, email: string, bio: string): Promise<void> {
   try {
     const perfis = await carregarPerfis();
-    const index = perfis.findIndex((p) => p.id === id);
+    const index = perfis.findIndex((perfil) => perfil.id === id);
     if (index !== -1) {
       perfis[index] = { id, nome, email, bio };
       await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(perfis));
